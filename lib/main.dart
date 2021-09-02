@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 QuizBrain quizBrain = QuizBrain();
 
@@ -29,22 +30,40 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [ ];
- //  List<String> questions = [
- //    'Conakry is the Capital of Guinea?',
- //    'Africa have 56 Countries',
- //   'You can lead a cow down stairs but not up stairs.',
- //  'Approximately one quarter of human bones are in the feet.',
- // 'A slug\'s blood is green.',
- //  ];
- //
- //  List<bool> answers = [
- //    true,
- //    false,
- //    false,
- //    true,
- //    true,
- //  ];
 
+  void checkAnswer(bool userPickedAnswer){
+    bool correctAnswer = quizBrain.getCorrectAnswer();
+    if(userPickedAnswer == correctAnswer){
+      print('user got it right');
+      quizBrain.getAnswerCount(true);
+      quizBrain.getTotalAnswer();
+    }else{
+      print('user got it wrong');
+      quizBrain.getAnswerCount(false);
+      quizBrain.getTotalAnswer();
+
+    }
+    setState(() {
+      if(userPickedAnswer == correctAnswer){
+        scoreKeeper.add(
+            Icon(Icons.check, color: Colors.green,)
+        );
+
+      }else{
+        scoreKeeper.add(
+            Icon(Icons.close, color: Colors.red,)
+        );
+      }
+
+      if(scoreKeeper.length == quizBrain.getQuestionLength()){
+        scoreKeeper.length=0;
+        Alert(context: context, title: "Completed", desc: "  \n  Total Correct  ${quizBrain.getTotalTrue().toString()} \n \n  Total Wrong  ${quizBrain.getTotalFalse().toString()} ").show();
+      }
+      quizBrain.nextQuestion();
+
+    });
+
+  }
 
 
 
@@ -110,36 +129,8 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
+                checkAnswer(true);
 
-                bool correctAnswer = quizBrain.getCorrectAnswer();
-                if(correctAnswer == true){
-                  print('user got it right');
-                  quizBrain.getAnswerCount(true);
-                 quizBrain.getTotalAnswer();
-                }else{
-                  print('user got it wrong');
-                  quizBrain.getAnswerCount(false);
-                  quizBrain.getTotalAnswer();
-
-                }
-                setState(() {
-                  if(correctAnswer == true){
-                    scoreKeeper.add(
-                        Icon(Icons.check, color: Colors.green,)
-                    );
-
-                  }else{
-                    scoreKeeper.add(
-                        Icon(Icons.close, color: Colors.red,)
-                    );
-                  }
-
-                  if(scoreKeeper.length == quizBrain.getQuestionLength()){
-                    scoreKeeper.length=0;
-                  }
-                    quizBrain.nextQuestion();
-
-                });
               },
             ),
           ),
@@ -158,36 +149,7 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                bool correctAnswer = quizBrain.getCorrectAnswer();
-                if(correctAnswer == false){
-                  print('user got it right');
-                  // quizBrain.getAnswerTrue();
-                  quizBrain.getAnswerCount(true);
-                  quizBrain.getTotalAnswer();
-
-                }else{
-                  print('user got it wrong');
-                  // quizBrain.getAnswerFalse();
-                  quizBrain.getAnswerCount(false);
-                  quizBrain.getTotalAnswer();
-                }
-                setState(() {
-                  if(correctAnswer == false){
-                    scoreKeeper.add(
-                        Icon(Icons.check, color: Colors.green,)
-                    );
-
-                  }else{
-                    scoreKeeper.add(
-                        Icon(Icons.close, color: Colors.red,)
-                    );
-                  }
-                  if(scoreKeeper.length == quizBrain.getQuestionLength()){
-                    scoreKeeper.length=0;
-                  }
-
-               quizBrain.nextQuestion();
-                });
+                checkAnswer(false);
               },
             ),
           ),
